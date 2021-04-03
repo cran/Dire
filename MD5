@@ -1,7 +1,7 @@
-241c8f4830aeeb887351a1ab1e847141 *DESCRIPTION
+130c8d31a9cf912355b21e762f87992b *DESCRIPTION
 c953458712adbcf57a581bfd2faac0ed *NAMESPACE
 58a841651e041a1f9d24700214d62ffc *R/RcppExports.R
-19c6cfb3948feb34131e190c5bfcf72b *R/de.R
+c55f26d1a6220da165828176a83eeb5c *R/de.R
 622f29491e1d4b807353c0ddf885f38b *R/diff.R
 cd0bb3c7a2c3eab0c09d8a5d18805e1c *R/helpers.R
 310d219e1dc5cf82f93fcdd7a4f9c0ad *R/lnl.R
@@ -10,7 +10,7 @@ f3460e31bde2041c80915e85dcebeccd *R/rr1.R
 344007151d0eaee2c3384a094b60c9be *R/zzz.R
 5b31187d2b6cdba54966a9ca52b15071 *build/vignette.rds
 3423808f3b65438f870f94e2feffd62f *inst/doc/MML.Rmd
-ebe6fa50132897dec4a60f53b23fd811 *inst/doc/MML.pdf
+93b607212aeb383bcc906a97334eab0a *inst/doc/MML.pdf
 9ac5f7358bb82d1d0de5aef2b5f9875c *man/examples/de.R
 552020a0a19f27c71f2bbee36b1eaa3a *man/mml.Rd
 317e383add205418ec00fecd36558b45 *src/RcppExports.cpp
