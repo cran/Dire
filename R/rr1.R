@@ -5,15 +5,15 @@ calcRR1_dopar <- function(stu, Q, model, paramTab, nodes, fast) {
   dcols <- colnames(paramTab)[grepl('d[[:digit:]]', colnames(paramTab))]
   # check if missing present
   doMissing <- all(c("missingCode", "missingValue") %in% colnames(paramTab))
-  rr1 <- foreach(dopari = itx1, .export = c('ldbinom2', "gpcm", "grm", "pasteItems")) %dopar% {
+  rr1 <- foreach(dopari = itx1, .export = c('ldbinom3', "gpcm", "grm", "pasteItems")) %dopar% {
     x <- dopari$score
     if(length(x) == 0 || all(is.na(x))) {
-      return(rep(0,Q))
+      return(rep(1, Q))
     }
     # subset to items this student was shown
     paramTabi <- paramTab[paramTab$ItemID %in% dopari$key,] # rename so object isn't confused wih paramTab argument
     ind.dichot <- which(paramTabi$scorePoints == 1)
-    dParams <- paramTabi[ind.dichot,]
+    dParams <- paramTabi[ind.dichot, ]
     # get parameter values from items
     slope <- dParams$slope
     difficulty <- dParams$difficulty
@@ -39,7 +39,7 @@ calcRR1_dopar <- function(stu, Q, model, paramTab, nodes, fast) {
       if(fast){
         multItems(x1, guessing, D, slope, nodes, difficulty)
       } else {
-        sapply(1:Q, function(j) sum(ldbinom2(x1, guessing + (1 - guessing) / (1 + exp(-D * slope * (nodes[j] - difficulty)))), na.rm=TRUE))
+        sapply(1:Q, function(j) sum(ldbinom3(x1, guessing + (1 - guessing) / (1 + exp(-D * slope * (nodes[j] - difficulty)))), na.rm=TRUE))
       }
     } else {
       0
@@ -54,7 +54,7 @@ calcRR1_dopar <- function(stu, Q, model, paramTab, nodes, fast) {
         dv <- pre_dv[!is.na(pre_dv)]
         d <- c(d, list(dv))
         if(x2[i] > length(dv)) {
-          stop(paste0("score higher than length of d. sid=",dopari$sid[1], " paramTab line=",pasteItems(pParams[i,])))
+          stop(paste0("score of ", dQuote(x2[i] - (model=='gpcm')), " higher than expected maximum of ", dQuote(length(dv) - (model=='gpcm')), ". on item ", dQuote(pParams$ItemID[i]), " person ", dQuote(dopari[1,1])))
         }
       }
       D <- pParams$D
@@ -63,7 +63,7 @@ calcRR1_dopar <- function(stu, Q, model, paramTab, nodes, fast) {
         ansItems(d,aa,nodes,x2, D)
       } else {
         # otherwise R solution 
-        sapply(1:Q, function(j) sum(log(mapply(get(model), d = d, a = aa, theta = nodes[j], score = x2, D=D)), na.rm=TRUE))
+        sapply(1:Q, function(j) sum(log(mapply(get(tolower(model)), d = d, a = aa, theta = nodes[j], score = x2, D=D)), na.rm=TRUE))
       }
     } else {
       0
@@ -82,7 +82,7 @@ calcRR1 <- function(stu, Q, model, paramTab, nodes, fast) {
   rr1 <- lapply(stu, function(dopari) {
     x <- dopari$score
     if(length(x) == 0 || all(is.na(x))) {
-      return(rep(0,Q))
+      return(rep(1, Q))
     }
     # subset to items this student was shown
     paramTab <- paramTab[paramTab$ItemID %in% dopari$key,]
@@ -113,7 +113,7 @@ calcRR1 <- function(stu, Q, model, paramTab, nodes, fast) {
       if(fast){
         multItems(x1, guessing, D, slope, nodes, difficulty)
       } else {
-        sapply(1:Q, function(j) sum(ldbinom2(x1, guessing + (1 - guessing) / (1 + exp(-D * slope * (nodes[j] - difficulty)))), na.rm=TRUE))
+        sapply(1:Q, function(j) sum(ldbinom3(x1, guessing + (1 - guessing) / (1 + exp(-D * slope * (nodes[j] - difficulty)))), na.rm=TRUE))
       }
     } else {
       0
@@ -128,7 +128,7 @@ calcRR1 <- function(stu, Q, model, paramTab, nodes, fast) {
         dv <- pre_dv[!is.na(pre_dv)]
         d <- c(d, list(dv))
         if(x2[i] > length(dv)) {
-          stop(paste0("score higher than length of d. sid=",dopari$sid[1], " paramTab line=",pasteItems(pParams[i,])))
+          stop(paste0("score of ", dQuote(x2[i] - (model=='gpcm')), " higher than expected maximum of ", dQuote(length(dv) - (model=='gpcm')), ". on item ", dQuote(pParams$ItemID[i]), " person ", dQuote(dopari[1,1])))
         }
       }
       D <- pParams$D
@@ -137,7 +137,7 @@ calcRR1 <- function(stu, Q, model, paramTab, nodes, fast) {
         ansItems(d,aa,nodes,x2, D)
       } else {
         # otherwise R solution 
-        sapply(1:Q, function(j) sum(log(mapply(get(model), d = d, a = aa, theta = nodes[j], score = x2, D=D)), na.rm=TRUE))
+        sapply(1:Q, function(j) sum(log(mapply(get(tolower(model)), d = d, a = aa, theta = nodes[j], score = x2, D=D)), na.rm=TRUE))
       }
     } else {
       0
