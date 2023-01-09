@@ -445,7 +445,6 @@ drawPVs.mmlCompositeMeans <- function(x, npv=5L, pvVariableNameSuffix="_dire",
   
   if(stochasticBeta){
     #helpers 
-    mat0 <- matrix(0, nrow=nConstructs, ncol=nConstructs)
     pvListByID <- list()
     # loop through students 
     pvListByID <- lapply(1:nrow(posterior), function(rowi) {
