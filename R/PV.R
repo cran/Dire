@@ -73,8 +73,7 @@ drawPVs.mmlMeans <- function(x, npv=5L,
   if(npv <= 0) {
     stop("Must generate a positive number of plausible values.")
   }
-  
-  beta <- x$coefficients
+  beta <- x$coef#ficients
   if(inherits(beta, "matrix")) {
     beta <- x$latentCoef
   }
@@ -241,7 +240,7 @@ getMMLCBeta <- function(x) {
   if(inherits(x, "summary.mmlCompositeMeans")) {
     return(x$rawCoef)
   }
-  return(x$coefficients)
+  return(x$coef)
 }
 
 
@@ -509,10 +508,14 @@ drawPVs.mmlCompositeMeans <- function(x, npv=5L, pvVariableNameSuffix="_dire",
 nearPD2 <- function(X, tol=400, warn="") {
   eig <- eigen(X)
   if(min(eig$values) <= 0 || max(eig$values)/min(eig$values) >= 1/((.Machine$double.eps)^0.25)) {
-    if(nchar(warn) > 0) {
-      warning(warn)
+    X2 <- nearPD(X,  posd.tol=tol*sqrt(.Machine$double.eps))$mat
+    # unless this is now "more non-singular"
+    if(min(eig$values) <= 0 || max(abs(solve(X) %*% X - diag(nrow(X)))) * (.Machine$double.eps)^0.25>  max(abs(solve(X2) %*% X2 - diag(nrow(X))))) {
+      if(nchar(warn) > 0) {
+        warning(warn)
+      }
+      X <- nearPD(X,  posd.tol=tol*sqrt(.Machine$double.eps))$mat
     }
-    X <- nearPD(X,  posd.tol=tol*sqrt(.Machine$double.eps))$mat
   }
   return(X)
 }
